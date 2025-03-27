@@ -1,13 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { users } from "../../../lib/users";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const POST = async (req) => {
+interface LoginRequestBody {
+  username: string;
+  password: string;
+}
+
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   try {
-    const { username, password } = await req.json();
+    const { username, password }: LoginRequestBody = await req.json();
 
     const user = users.find((u) => u.username === username);
     if (!user) {
@@ -42,7 +47,7 @@ export const POST = async (req) => {
   }
 };
 
-export const OPTIONS = async () => {
+export const OPTIONS = async (): Promise<NextResponse> => {
   return new NextResponse(null, {
     status: 204,
     headers: {

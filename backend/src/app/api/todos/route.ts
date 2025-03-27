@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { todos } from "../../lib/todos";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const GET = async (req) => {
+export const GET = async (req: NextRequest): Promise<NextResponse> => {
   try {
     const authHeader = req.headers.get("authorization");
 
@@ -17,7 +17,7 @@ export const GET = async (req) => {
 
     const token = authHeader.split(" ")[1];
 
-    jwt.verify(token, JWT_SECRET);
+    jwt.verify(token, JWT_SECRET as string);
 
     return NextResponse.json(todos, {
       status: 200,
@@ -31,7 +31,7 @@ export const GET = async (req) => {
   }
 };
 
-export const POST = async (req) => {
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   try {
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
@@ -42,19 +42,19 @@ export const POST = async (req) => {
     }
 
     const token = authHeader.split(" ")[1];
-    jwt.verify(token, JWT_SECRET);
+    jwt.verify(token, JWT_SECRET as string);
 
     const data = await req.json();
-    const { text } = data;
+    const { text }: { text: string } = data;
     if (!text) {
-      return new NextResponse.json("Text is required", {
+      return new NextResponse("Text is required", {
         status: 400,
         headers: { "Access-Control-Allow-Origin": "*" },
       });
     }
 
     const newTodo = {
-      id: todos.length + 1,
+      id: String(Date.now()),
       text,
     };
     todos.push(newTodo);
@@ -81,7 +81,7 @@ export const POST = async (req) => {
   }
 };
 
-export const OPTIONS = async () => {
+export const OPTIONS = async (): Promise<NextResponse> => {
   return new NextResponse(null, {
     status: 204,
     headers: {

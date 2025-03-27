@@ -1,10 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { users } from "../../../lib/users";
 import bcrypt from "bcryptjs";
 
-export const POST = async (req) => {
+interface RegisterRequestBody {
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+}
+
+export const POST = async (req: NextRequest): Promise<NextResponse> => {
   try {
-    const { firstName, lastName, username, password } = await req.json();
+    const { firstName, lastName, username, password }: RegisterRequestBody =
+      await req.json();
 
     const exists = users.find((u) => u.username === username);
     if (exists) {
@@ -35,7 +43,7 @@ export const POST = async (req) => {
   }
 };
 
-export const OPTIONS = async () => {
+export const OPTIONS = async (): Promise<NextResponse> => {
   return new NextResponse(null, {
     status: 204,
     headers: {

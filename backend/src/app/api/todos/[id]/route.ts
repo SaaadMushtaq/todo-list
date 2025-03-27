@@ -1,13 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { todos } from "../../../lib/todos";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const DELETE = async (req, { params }) => {
+interface Params {
+  params: {
+    id: string;
+  };
+}
+
+export const DELETE = async (
+  req: NextRequest,
+  { params }: Params
+): Promise<NextResponse> => {
   try {
     const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
+    if (!authHeader || !authHeader?.startsWith("Bearer ")) {
       return new NextResponse("Unauthorized", {
         status: 401,
         headers: { "Access-Control-Allow-Origin": "*" },
@@ -17,7 +26,8 @@ export const DELETE = async (req, { params }) => {
     const token = authHeader.split(" ")[1];
     jwt.verify(token, JWT_SECRET);
 
-    const id = parseInt(params.id);
+    const paramsData = await params;
+    const { id } = paramsData;
     const index = todos.findIndex((todo) => todo.id === id);
 
     if (index === -1) {
@@ -44,7 +54,7 @@ export const DELETE = async (req, { params }) => {
   }
 };
 
-export const OPTIONS = async () => {
+export const OPTIONS = async (): Promise<NextResponse> => {
   return new NextResponse(null, {
     status: 204,
     headers: {
