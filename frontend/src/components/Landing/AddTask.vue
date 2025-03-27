@@ -33,9 +33,10 @@
         </button>
         <button
           type="submit"
-          :class="`w-full text-white px-4 py-2 flex items-center justify-center gap-2 cursor-pointer rounded ${
+          :class="`w-full text-white px-4 py-2 flex items-center justify-center gap-2 cursor-pointer rounded disabled:bg-blue-200 disabled:cursor-not-allowed ${
             addTaskLoading ? 'bg-gray-200' : 'bg-blue-500 hover:bg-blue-600'
           }`"
+          :disabled="newTask.length === 0 || addTaskLoading"
         >
           <Loader v-if="props.addTaskLoading" />
           <font-awesome-icon

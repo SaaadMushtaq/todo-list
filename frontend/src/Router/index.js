@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Landing from "../pages/Landing.vue";
-import LoginPage from "../pages/Login.vue";
-import SignupPage from "../pages/Signup.vue";
+import Login from "../pages/Login.vue";
+import Signup from "../pages/Signup.vue";
 
 const routes = [
   {
@@ -13,12 +13,12 @@ const routes = [
   {
     path: "/login",
     name: "login",
-    component: LoginPage,
+    component: Login,
   },
   {
     path: "/signup",
     name: "signup",
-    component: SignupPage,
+    component: Signup,
   },
 ];
 
@@ -32,7 +32,7 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !isLoggedIn) {
     next({ path: "/login" });
-  } else if ((to.name === "login" || to.name === "signup") && isLoggedIn) {
+  } else if ((to.path === "/login" || to.path === "/signup") && isLoggedIn) {
     next({ path: "/" });
   } else {
     next();
